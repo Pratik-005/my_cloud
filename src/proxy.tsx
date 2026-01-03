@@ -4,8 +4,6 @@ import { NextResponse } from 'next/server'
 const isPublicRoute = createRouteMatcher([
     "/sign-in",
     "/sign-up",
-    "/",
-    "/home"
 ]);
 
 const isPublicApiRoute = createRouteMatcher([
@@ -15,33 +13,21 @@ const isPublicApiRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
 
-    const { userId } = auth();
-
-    const path = req.nextUrl.pathname;
-    const isApiRequest = req.nextUrl.pathname.startsWith("/api")
+    const { userId } = await auth();
 
     if (userId && isPublicRoute(req)) {
-        return NextResponse.redirect(new URL("/home", req.url))
+        return NextResponse.redirect(new URL("/", req.url))
     }
 
     if (!userId) {
-
-        // If user is not logged in and trying to access a protected route
         if (!isPublicRoute(req) && !isPublicApiRoute(req)) {
             return NextResponse.redirect(new URL("/sign-in", req.url))
         }
-
-        // If the request is for a protected API and the user is not logged in
-        if (isApiRequest && !isPublicApiRoute(req)) {
-            return NextResponse.redirect(new URL("/sign-in", req.url))
-        }
-
     }
-
 
     return NextResponse.next();
 
-})
+});
 
 export const config = {
     matcher: [
@@ -49,3 +35,4 @@ export const config = {
         '/(api|trpc)(.*)',
     ],
 }
+
