@@ -4,6 +4,7 @@ import Link from "next/link";
 import { LogOutIcon, LayoutDashboardIcon, Share2Icon, UploadIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 
 const sidebarItems = [
@@ -21,7 +22,11 @@ const AppLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+
+    const router = useRouter();
+
     const handleLogout = async () => await signOut()
+
 
     useEffect(() => {
 
@@ -46,8 +51,8 @@ const AppLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     }, [sidebarOpen])
 
     return (
-        <div  >
-            <div className="drawer lg:drawer-open">
+        <div className="min-h-screen" >
+            <div className="drawer lg:drawer-open min-h-screen">
 
                 <input id="my-drawer-1" type="checkbox" className="drawer-toggle"
                     checked={sidebarOpen}
@@ -79,7 +84,7 @@ const AppLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
                     </div>
 
                     <main className="grow">
-                        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-8">
+                        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-8 h-">
                             {children}
                         </div>
                     </main>
@@ -97,7 +102,10 @@ const AppLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
                                             ? "bg-primary text-white"
                                             : "hover:bg-base-300"
                                             }`}
-                                    // onClick={() => setSidebarOpen(false)}
+                                        onClick={() => {
+                                            router.push(item.href);
+                                            setSidebarOpen(false)
+                                        }}
                                     >
                                         <item.icon className="w-4 h-4" />
                                         <span>{item.label}</span>

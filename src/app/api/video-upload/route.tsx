@@ -51,19 +51,26 @@ export async function POST(req: NextRequest) {
                 {
                     resource_type: "video",
                     folder: "videos",
-                    transformation: [
-                        { quality: "auto", fetch_format: "mp4" },
-                    ]
+                    eager: [
+                        {
+                            quality: "auto",
+                            fetch_format: "mp4",
+                        },
+                    ],
+                    eager_async: true, // ✅ async processing
                 },
-                (error: any, result) => {
+                (error, result) => {
                     if (error) reject(error);
                     else resolve(result as CloudinaryUploadResult);
                 }
-            )
+            );
+
 
             uploadStream.end(buffer)
 
-        })
+        });
+
+        console.log(result)
 
         const video = await prisma.video.create({
             data: {
